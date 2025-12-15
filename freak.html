@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freak Mode - Alicia Sánchez</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-blue: #3B82F6;
+      --primary-purple: #9333EA;
+      --primary-orange: #F97316;
+      --bg-light: #FFFFFF;
+      --bg-secondary: #F8FAFC;
+      --text-primary: #0F172A;
+      --text-secondary: #475569;
+      --text-muted: #64748B;
+      --border-light: #E2E8F0;
+      --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+    
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 50%, #F1F5F9 100%);
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    /* Cherry blossom background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://images.unsplash.com/photo-1648197372797-f709960f86b1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTAwNDR8MHwxfHNlYXJjaHw0fHxjaGVycnklMjBibG9zc29tJTIwdHJlZSUyMHNwcmluZyUyMHBpbmslMjBmbG93ZXJzJTIwbmF0dXJlJTIwbmF0dXJlJTIwc3ByaW5nJTIwcGlua3xlbnwwfDB8fHwxNzY1NjY5ODYxfDA&ixlib=rb-4.1.0&q=85');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      opacity: 0.08;
+      z-index: -2;
+      pointer-events: none;
+    }
+    
+    /* Falling petals container */
+    .petals-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+    
+    /* Individual petal */
+    .petal {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background: radial-gradient(ellipse at center, #FFB7D5 0%, #FFC0E0 50%, #FFD4EA 100%);
+      border-radius: 50% 0 50% 0;
+      opacity: 0.7;
+      animation: fall linear infinite;
+      transform-origin: center;
+    }
+    
+    /* Falling animation */
+    @keyframes fall {
+      0% {
+        transform: translateY(-10vh) rotate(0deg);
+        opacity: 0.7;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      90% {
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+    
+    /* Swaying animation */
+    @keyframes sway {
+      0%, 100% {
+        transform: translateX(0);
+      }
+      50% {
+        transform: translateX(50px);
+      }
+    }
+    
+    .font-display {
+      font-family: 'VT323', monospace;
+      letter-spacing: 0.03em;
+    }
+    
+    /* Smooth transitions */
+    * {
+      transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+    }
+    
+    /* Card hover effects */
+    .card-hover {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    }
+    
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple), var(--primary-orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    /* Modal styles */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .modal-backdrop.active {
+      display: flex;
+      opacity: 1;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-content {
+      position: relative;
+      background: white;
+      border-radius: 24px;
+      max-width: 90vw;
+      max-height: 90vh;
+      width: 900px;
+      padding: 2rem;
+      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+    
+    .modal-backdrop.active .modal-content {
+      transform: scale(1);
+    }
+    
+    .slider-container {
+      position: relative;
+      width: 100%;
+      height: 500px;
+      overflow: hidden;
+      border-radius: 16px;
+      background: #F1F5F9;
+    }
+    
+    .slider-track {
+      display: flex;
+      transition: transform 0.5s ease;
+      height: 100%;
+    }
+    
+    .slider-slide {
+      min-width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .slider-slide img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    
+    .slider-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: white;
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      z-index: 10;
+    }
+    
+    .slider-nav:hover {
+      background: #F8FAFC;
+      transform: translateY(-50%) scale(1.1);
+    }
+    
+    .slider-nav.prev { left: 1rem; }
+    .slider-nav.next { right: 1rem; }
+    
+    .slider-dots {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+    
+    .slider-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #CBD5E1;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .slider-dot.active {
+      background: var(--primary-blue);
+      width: 24px;
+      border-radius: 5px;
+    }
+    
+    .close-modal {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: #F1F5F9;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 20;
+    }
+    
+    .close-modal:hover {
+      background: #E2E8F0;
+      transform: rotate(90deg);
+    }
+    
+    /* Floating animation */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    .float-animation {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    /* Music player hover */
+    .music-item {
+      transition: all 0.3s ease;
+    }
+    
+    .music-item:hover {
+      background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.05), transparent);
+    }
+    
+    /* Star rating animation */
+    .star-rating {
+      display: inline-block;
+      transition: transform 0.3s;
+    }
+    
+    .star-rating:hover {
+      transform: scale(1.1);
+    }
+
+    /* Responsive modal */
+    @media (max-width: 768px) {
+      .modal-content {
+        width: 95vw;
+        padding: 1.5rem;
+      }
+      
+      .slider-container {
+        height: 300px;
+      }
+      
+      .slider-nav {
+        width: 40px;
+        height: 40px;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  
+  <!-- Falling Cherry Blossom Petals -->
+  <div class="petals-container" id="petalsContainer"></div>
+    
+  <!-- Header -->
+  <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 md:px-6 py-6 flex items-center justify-between">
+      <div class="flex items-center gap-3 header-content">
+        <div class="p-2 bg-gradient-to-br from-[#3B82F6] to-[#9333EA] rounded-lg float-animation shadow-md">
+          <i data-lucide="gamepad-2" class="text-white w-7 h-7"></i>
+        </div>
+        <h1 class="font-display text-2xl md:text-3xl font-bold text-slate-900">FREAK <span class="gradient-text">MODE</span></h1>
+      </div>
+      <button onclick="location.href='index.html'" class="flex items-center gap-2 text-slate-600 hover:text-[#3B82F6] transition-all duration-300 group">
+        <i data-lucide="home" class="w-6 h-6 group-hover:scale-110 transition-transform"></i>
+        <span class="hidden sm:inline font-medium">Inicio</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-16">
+    
+    <!-- Intro -->
+    <div class="text-center mb-20 intro-section">
+      <div class="inline-block mb-6">
+        <span class="px-4 py-2 bg-gradient-to-r from-[#3B82F6]/10 to-[#9333EA]/10 border border-[#3B82F6]/30 rounded-full text-[#3B82F6] text-sm font-semibold backdrop-blur-sm">
+          Mi Universo Personal
+        </span>
+      </div>
+      <h2 class="font-display text-5xl md:text-7xl font-bold gradient-text mb-6">
+        GAMING · ANIME · MÚSICA
+      </h2>
+      <p class="text-xl md:text-2xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
+        Donde la creatividad se encuentra con la pasión por el entretenimiento
+      </p>
+      <div class="flex justify-center mt-8">
+        <div class="h-1 w-32 bg-gradient-to-r from-[#3B82F6] via-[#9333EA] to-[#F97316] rounded-full"></div>
+      </div>
+    </div>
+
+    <!-- Gaming & Art Section -->
+    <section class="mb-20 gaming-section">
+      <div class="flex items-center gap-4 mb-8">
+        <div class="p-3 bg-gradient-to-br from-[#3B82F6] to-[#9333EA] rounded-xl shadow-md">
+          <i data-lucide="gamepad-2" class="text-white w-8 h-8"></i>
+        </div>
+        <h3 class="font-display text-4xl md:text-5xl font-bold text-slate-900">ARTE & VIDEOJUEGOS</h3>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="art-card card-hover bg-white border border-slate-200 rounded-2xl p-6 shadow-md" data-gallery="3d-modeling">
+          <div class="flex items-center gap-3 mb-4">
+            <i data-lucide="box" class="text-[#3B82F6] w-6 h-6"></i>
+            <h4 class="font-display text-2xl font-bold text-slate-900">MODELADO 3D</h4>
+          </div>
+          <p class="text-slate-600 mb-4 text-lg">Personajes, paisajes y objetos con detalle fotorrealista</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1.5 bg-slate-100 text-[#3B82F6] text-sm font-medium rounded-lg border border-slate-200">Blender</span>
+            <span class="px-3 py-1.5 bg-slate-100 text-[#3B82F6] text-sm font-medium rounded-lg border border-slate-200">Unreal Engine</span>
+            <span class="px-3 py-1.5 bg-slate-100 text-[#3B82F6] text-sm font-medium rounded-lg border border-slate-200">3ds Max</span>
+          </div>
+          <div class="mt-4 text-sm text-slate-500 flex items-center gap-2">
+            <i data-lucide="image" class="w-4 h-4"></i>
+            <span>Click para ver galería</span>
+          </div>
+        </div>
+
+        <div class="art-card card-hover bg-white border border-slate-200 rounded-2xl p-6 shadow-md" data-gallery="animations">
+          <div class="flex items-center gap-3 mb-4">
+            <i data-lucide="play-circle" class="text-[#9333EA] w-6 h-6"></i>
+            <h4 class="font-display text-2xl font-bold text-slate-900">ANIMACIONES</h4>
+          </div>
+          <p class="text-slate-600 mb-4 text-lg">No solo movimiento, es dar vida y personalidad</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1.5 bg-slate-100 text-[#9333EA] text-sm font-medium rounded-lg border border-slate-200">Blender</span>
+            <span class="px-3 py-1.5 bg-slate-100 text-[#9333EA] text-sm font-medium rounded-lg border border-slate-200">Unreal Engine</span>
+            <span class="px-3 py-1.5 bg-slate-100 text-[#9333EA] text-sm font-medium rounded-lg border border-slate-200">After Effects</span>
+          </div>
+          <div class="mt-4 text-sm text-slate-500 flex items-center gap-2">
+            <i data-lucide="image" class="w-4 h-4"></i>
+            <span>Click para ver galería</span>
+          </div>
+        </div>
+
+        <div class="art-card card-hover bg-white border border-slate-200 rounded-2xl p-6 shadow-md" data-gallery="props">
+          <div class="flex items-center gap-3 mb-4">
+            <i data-lucide="package" class="text-[#F97316] w-6 h-6"></i>
+            <h4 class="font-display text-2xl font-bold text-slate-900">PROPS & ASSETS</h4>
+          </div>
+          <p class="text-slate-600 mb-4 text-lg">Objetos y accesorios con texturizado avanzado</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1.5 bg-slate-100 text-[#F97316] text-sm font-medium rounded-lg border border-slate-200">Blender</span>
+            <span class="px-3 py-1.5 bg-slate-100 text-[#F97316] text-sm font-medium rounded-lg border border-slate-200">ZBrush</span>
+            <span class="px-3 py-1.5 bg-slate-100 text-[#F97316] text-sm font-medium rounded-lg border border-slate-200">Substance</span>
+          </div>
+          <div class="mt-4 text-sm text-slate-500 flex items-center gap-2">
+            <i data-lucide="image" class="w-4 h-4"></i>
+            <span>Click para ver galería</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="mb-20 reviews-section">
+      <div class="flex items-center gap-4 mb-8">
+        <div class="p-3 bg-gradient-to-br from-[#9333EA] to-[#3B82F6] rounded-xl shadow-md">
+          <i data-lucide="film" class="text-white w-8 h-8"></i>
+        </div>
+        <h3 class="font-display text-4xl md:text-5xl font-bold text-slate-900">REVIEWS EN UNA FRASE</h3>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="review-card bg-gradient-to-br from-[#3B82F6]/5 to-white border border-[#3B82F6]/20 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all duration-300">
+          <span class="inline-block px-3 py-1.5 bg-[#3B82F6]/10 text-[#3B82F6] text-sm font-semibold rounded-full mb-4 border border-[#3B82F6]/20">PELÍCULA</span>
+          <h4 class="font-display text-3xl font-bold text-slate-900 mb-3">FLOW</h4>
+          <div class="flex gap-1 text-[#F59E0B] mb-4 star-rating">⭐⭐⭐⭐⭐</div>
+          <p class="text-slate-600 italic text-lg leading-relaxed">"Obra maestra y punto. Por cierto, no solo sale un gato."</p>
+        </div>
+
+        <div class="review-card bg-gradient-to-br from-[#9333EA]/5 to-white border border-[#9333EA]/20 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all duration-300">
+          <span class="inline-block px-3 py-1.5 bg-[#9333EA]/10 text-[#9333EA] text-sm font-semibold rounded-full mb-4 border border-[#9333EA]/20">SERIE</span>
+          <h4 class="font-display text-3xl font-bold text-slate-900 mb-3">THE OFFICE</h4>
+          <div class="flex gap-1 text-[#F59E0B] mb-4 star-rating">⭐⭐⭐⭐⭐</div>
+          <p class="text-slate-600 italic text-lg leading-relaxed">"Por si quieres pasar por todas las emociones posibles."</p>
+        </div>
+
+        <div class="review-card bg-gradient-to-br from-[#F97316]/5 to-white border border-[#F97316]/20 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all duration-300">
+          <span class="inline-block px-3 py-1.5 bg-[#F97316]/10 text-[#F97316] text-sm font-semibold rounded-full mb-4 border border-[#F97316]/20">JUEGO</span>
+          <h4 class="font-display text-3xl font-bold text-slate-900 mb-3">HALF-LIFE</h4>
+          <div class="flex gap-1 text-[#F59E0B] mb-4 star-rating">⭐⭐⭐⭐⭐</div>
+          <p class="text-slate-600 italic text-lg leading-relaxed">"Tiros, bichos y radiactividad. Si tu fecha no empieza por 2, te gustará más."</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Playlist Section -->
+    <section class="playlist-section mb-16">
+      <div class="flex items-center gap-4 mb-8">
+        <div class="p-3 bg-gradient-to-br from-[#3B82F6] to-[#F97316] rounded-xl shadow-md">
+          <i data-lucide="music" class="text-white w-8 h-8"></i>
+        </div>
+        <h3 class="font-display text-4xl md:text-5xl font-bold text-slate-900">MI PLAYLIST</h3>
+      </div>
+      <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-md">
+        
+        <div class="music-item flex items-center justify-between p-5 border-b border-slate-200 group">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-gradient-to-br from-[#3B82F6] to-[#F97316] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+              <i data-lucide="music" class="text-white w-7 h-7"></i>
+            </div>
+            <div>
+              <h4 class="text-slate-900 font-semibold text-lg">Blinding Lights</h4>
+              <p class="text-slate-500">The Weeknd</p>
+            </div>
+          </div>
+          <a href="https://www.youtube.com/watch?v=4NRXx6U8ABQ" target="_blank"
+             class="hidden group-hover:flex items-center justify-center p-3 bg-slate-100 rounded-full hover:bg-[#3B82F6] hover:text-white transition-all">
+            <i data-lucide="play" class="w-5 h-5"></i>
+          </a>
+        </div>
+
+        <div class="music-item flex items-center justify-between p-5 border-b border-slate-200 group">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-gradient-to-br from-[#9333EA] to-[#3B82F6] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+              <i data-lucide="music" class="text-white w-7 h-7"></i>
+            </div>
+            <div>
+              <h4 class="text-slate-900 font-semibold text-lg">Bohemian Rhapsody</h4>
+              <p class="text-slate-500">Queen</p>
+            </div>
+          </div>
+          <a href="https://www.youtube.com/watch?v=fJ9rUzIMcZQ" target="_blank"
+             class="hidden group-hover:flex items-center justify-center p-3 bg-slate-100 rounded-full hover:bg-[#9333EA] hover:text-white transition-all">
+            <i data-lucide="play" class="w-5 h-5"></i>
+          </a>
+        </div>
+
+        <div class="music-item flex items-center justify-between p-5 border-b border-slate-200 group">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-gradient-to-br from-[#3B82F6] to-[#9333EA] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+              <i data-lucide="music" class="text-white w-7 h-7"></i>
+            </div>
+            <div>
+              <h4 class="text-slate-900 font-semibold text-lg">Midnight City</h4>
+              <p class="text-slate-500">M83</p>
+            </div>
+          </div>
+          <a href="https://www.youtube.com/watch?v=dX3k_QDnzHE" target="_blank"
+             class="hidden group-hover:flex items-center justify-center p-3 bg-slate-100 rounded-full hover:bg-[#3B82F6] hover:text-white transition-all">
+            <i data-lucide="play" class="w-5 h-5"></i>
+          </a>
+        </div>
+
+        <div class="music-item flex items-center justify-between p-5 border-b border-slate-200 group">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-gradient-to-br from-[#F97316] to-[#3B82F6] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+              <i data-lucide="music" class="text-white w-7 h-7"></i>
+            </div>
+            <div>
+              <h4 class="text-slate-900 font-semibold text-lg">Somebody That I Used to Know</h4>
+              <p class="text-slate-500">Gotye</p>
+            </div>
+          </div>
+          <a href="https://www.youtube.com/watch?v=8UVNT4wvIGY" target="_blank"
+             class="hidden group-hover:flex items-center justify-center p-3 bg-slate-100 rounded-full hover:bg-[#F97316] hover:text-white transition-all">
+            <i data-lucide="play" class="w-5 h-5"></i>
+          </a>
+        </div>
+
+        <div class="music-item flex items-center justify-between p-5 group">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-gradient-to-br from-[#9333EA] to-[#F97316] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+              <i data-lucide="music" class="text-white w-7 h-7"></i>
+            </div>
+            <div>
+              <h4 class="text-slate-900 font-semibold text-lg">Take Me to Church</h4>
+              <p class="text-slate-500">Hozier</p>
+            </div>
+          </div>
+          <a href="https://www.youtube.com/watch?v=PVjiKRfKpPI" target="_blank"
+             class="hidden group-hover:flex items-center justify-center p-3 bg-slate-100 rounded-full hover:bg-[#9333EA] hover:text-white transition-all">
+            <i data-lucide="play" class="w-5 h-5"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quote Section -->
+    <section class="text-center my-20 quote-section">
+      <div class="max-w-4xl mx-auto bg-white rounded-3xl p-12 shadow-lg border border-slate-200">
+        <div class="relative">
+          <div class="absolute -top-8 -left-4 text-[#3B82F6] text-8xl opacity-20">"</div>
+          <p class="font-display text-3xl md:text-4xl text-slate-900 italic relative z-10 leading-relaxed">
+            SOY EL PRINCIPIO DEL FIN, LA SOMBRA QUE ECLIPSA EL SOL
+          </p>
+          <div class="absolute -bottom-8 -right-4 text-[#3B82F6] text-8xl opacity-20">"</div>
+        </div>
+        <p class="text-slate-500 mt-8 text-lg">— Sylvanas Windrunner</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-10 text-center border-t border-slate-200 mt-16 bg-white/50">
+    <button onclick="location.href='about.html'" 
+            class="group text-slate-900 text-2xl md:text-3xl font-light tracking-wider hover:text-[#3B82F6] transition-all duration-300 hover:tracking-widest">
+      Alicia Sánchez
+    </button>
+  </footer>
+
+  <!-- Modal -->
+  <div id="imageModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content" role="document">
+      <button class="close-modal" aria-label="Cerrar modal" onclick="closeModal()">
+        <i data-lucide="x" class="w-6 h-6 text-slate-600"></i>
+      </button>
+      
+      <h3 id="modal-title" class="font-display text-3xl font-bold text-slate-900 mb-6 text-center"></h3>
+      
+      <div class="slider-container">
+        <div class="slider-track" id="sliderTrack"></div>
+        
+        <button class="slider-nav prev" aria-label="Imagen anterior" onclick="changeSlide(-1)">
+          <i data-lucide="chevron-left" class="w-6 h-6 text-slate-600"></i>
+        </button>
+        
+        <button class="slider-nav next" aria-label="Siguiente imagen" onclick="changeSlide(1)">
+          <i data-lucide="chevron-right" class="w-6 h-6 text-slate-600"></i>
+        </button>
+      </div>
+      
+      <div class="slider-dots" id="sliderDots"></div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    
+    // Register ScrollTrigger
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Header animation
+    gsap.from(".header-content", {
+      y: -50,
+      opacity: 0,
+      duration: 1,
+      ease: "power3.out"
+    });
+
+    // Intro section
+    gsap.from(".intro-section > *", {
+      y: 50,
+      opacity: 0,
+      duration: 1,
+      stagger: 0.2,
+      ease: "power3.out",
+      delay: 0.3
+    });
+
+    // Gaming cards
+    gsap.utils.toArray(".art-card").forEach((card, index) => {
+      gsap.from(card, {
+        scrollTrigger: {
+          trigger: card,
+          start: "top 80%",
+          toggleActions: "play none none reverse"
+        },
+        scale: 0.9,
+        opacity: 0,
+        y: 50,
+        duration: 0.8,
+        delay: index * 0.1,
+        ease: "power3.out"
+      });
+    });
+
+    // Review cards
+    gsap.utils.toArray(".review-card").forEach((card, index) => {
+      gsap.from(card, {
+        scrollTrigger: {
+          trigger: card,
+          start: "top 80%",
+          toggleActions: "play none none reverse"
+        },
+        y: 100,
+        opacity: 0,
+        duration: 0.8,
+        delay: index * 0.15,
+        ease: "power3.out"
+      });
+    });
+
+    // Music items
+    gsap.utils.toArray(".music-item").forEach((item, index) => {
+      gsap.from(item, {
+        scrollTrigger: {
+          trigger: item,
+          start: "top 90%",
+          toggleActions: "play none none reverse"
+        },
+        x: index % 2 === 0 ? -50 : 50,
+        opacity: 0,
+        duration: 0.6,
+        delay: index * 0.05,
+        ease: "power2.out"
+      });
+    });
+
+    // Quote section
+    gsap.from(".quote-section", {
+      scrollTrigger: {
+        trigger: ".quote-section",
+        start: "top 80%",
+        toggleActions: "play none none reverse"
+      },
+      scale: 0.9,
+      opacity: 0,
+      duration: 1,
+      ease: "power3.out"
+    });
+
+    // Modal and Slider functionality
+    const galleries = {
+      '3d-modeling': {
+        title: 'Modelado 3D',
+        images: [
+          { url: 'https://images.unsplash.com/photo-1675897634504-bf03f1a2a66a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTAwNDR8MHwxfHNlYXJjaHwxNXx8M2QlMjBjaGFyYWN0ZXIlMjBtb2RlbCUyMHJlbmRlciUyMHBob3RvcmVhbGlzdGljJTIwZGV0YWlsZWQlMjAzZCUyMGNoYXJhY3RlciUyMGJsZW5kZXIlMjByZW5kZXJ8ZW58MHwwfHx8MTc2NTY2ODgyMXww&ixlib=rb-4.1.0&q=85', alt: 'Personaje 3D con máscara blanca - Pawel Czerwinski on Unsplash' },
+          { url: 'https://pixabay.com/get/g9b9116b31bab6f0cca78df518279545fabe955bf452f6a734ab56f0ab641f70931395dab6e0c92f33fea380caeaa3587.jpg', alt: 'Modelo femenino 3D - TheSouza on Pixabay' },
+          { url: 'https://pixabay.com/get/g0a7309dd107f4ac1caae5879c90fc21da0ae3ecf4303c476f6319419475a170405c20d7d5ff980f6e8e9fbe97318b101.png', alt: 'Guerrero vikingo 3D - pendleburyannette on Pixabay' },
+          { url: 'https://images.unsplash.com/photo-1726500087541-086687ae0391?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTAwNDR8MHwxfHNlYXJjaHw0fHwzZCUyMGxhbmRzY2FwZSUyMGVudmlyb25tZW50JTIwdGVycmFpbiUyMG5hdHVyZSUyMHNjZW5lJTIwM2QlMjBlbnZpcm9ubWVudCUyMG5hdHVyZXxlbnwwfDB8fHwxNzY1NjY4ODIxfDA&ixlib=rb-4.1.0&q=85', alt: 'Paisaje 3D con colinas - Ashish R. Mishra on Unsplash' },
+          { url: 'https://pixabay.com/get/g9bbf3f792b028467988a384f8d1608aa07b759f78ba100e01ca352c869433d5542d1d81de5345c0ae1dadcfe7e06977a.jpg', alt: 'Bosque mágico 3D - lppicture on Pixabay' },
+          { url: 'https://pixabay.com/get/g0aa196382c4561853333ffef8f2e5ed07c63d66c12923d6cc7246ccc233f34f5b8c8a2bf45f436ecf27561fc96a00e42.jpg', alt: 'Terreno desértico 3D - Leo19k on Pixabay' }
+        ]
+      },
+      'animations': {
+        title: 'Animaciones',
+        images: [
+          { url: 'https://pixabay.com/get/g8841277aea9d4a423735534c6f434aa098da1978e70a3ef41e24d2cd75ce128409db988f5244d855bf37fae8a3993e1e.jpg', alt: 'Animación de personaje corriendo - t0ngo on Pixabay' },
+          { url: 'https://images.unsplash.com/photo-1630505330891-48ac596f2751?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTAwNDR8MHwxfHNlYXJjaHwxMnx8Y2hhcmFjdGVyJTIwYW5pbWF0aW9uJTIwcmlnZ2luZyUyMG1vdGlvbiUyMDNkJTIwYW5pbWF0aW9uJTIwY2hhcmFjdGVyJTIwbW90aW9uJTIwM2R8ZW58MHwwfHx8MTc2NTY2ODgyMXww&ixlib=rb-4.1.0&q=85', alt: 'Figura articulada de madera - Brett Jordan on Unsplash' },
+          { url: 'https://pixabay.com/get/g8d3a4b6cb30e06ac643615a73f7466f9d9747d5a31b49418424ff3c52e17bb6cdba953537b12353d572af8c4f64db5c8.jpg', alt: 'Superheroína volando - perianjs on Pixabay' },
+          { url: 'https://images.unsplash.com/photo-1763258559375-c74cc01521a0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTAwNDR8MHwxfHNlYXJjaHwxfHxtb3Rpb24lMjBncmFwaGljcyUyMGFic3RyYWN0JTIwYW5pbWF0aW9uJTIwY29sb3JmdWwlMjBhbmltYXRpb24lMjBtb3Rpb24lMjBncmFwaGljcyUyMGFic3RyYWN0fGVufDB8MHx8fDE3NjU2Njg4MjF8MA&ixlib=rb-4.1.0&q=85', alt: 'Gráficos en movimiento abstractos - Logan Voss on Unsplash' },
+          { url: 'https://images.unsplash.com/photo-1763025924393-59a46f8d64bf?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTAwNDR8MHwxfHNlYXJjaHw4fHxtb3Rpb24lMjBncmFwaGljcyUyMGFic3RyYWN0JTIwYW5pbWF0aW9uJTIwY29sb3JmdWwlMjBhbmltYXRpb24lMjBtb3Rpb24lMjBncmFwaGljcyUyMGFic3RyYWN0fGVufDB8MHx8fDE3NjU2Njg4MjF8MA&ixlib=rb-4.1.0&q=85', alt: 'Formas fluidas abstractas - Nigel Hoare on Unsplash' },
+          { url: 'https://images.unsplash.com/photo-1517777811156-8107dd473aca?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTAwNDR8MHwxfHNlYXJjaHwyMXx8M2QlMjBhbmltYXRpb24lMjBzZXF1ZW5jZSUyMGNoYXJhY3RlciUyMG1vdmVtZW50JTIwYW5pbWF0aW9uJTIwM2QlMjBzZXF1ZW5jZSUyMGNoYXJhY3RlcnxlbnwwfDB8fHwxNzY1NjY4ODIyfDA&ixlib=rb-4.1.0&q=85', alt: 'Secuencia de animación - Nicolas Thomas on Unsplash' }
+        ]
+      },
+      'props': {
+        title: 'Props & Assets',
+        images: [
+          { url: 'https://pixabay.com/get/ga8c3da30b1dd876467c8ecd4777967881a8352dbf5d92e74fab26eb2ffb3f4a4710328c2a285e91b35c67f9fc677f254.png', alt: 'Pistola steampunk - SerenityArt on Pixabay' },
+          { url: 'https://pixabay.com/get/g758b70b173acb1e9a19c37f1ea583ab17c93ea0ad87a04ad125f59800fae5b3f84551f526b481dfc5e7c996264ec3b43.jpg', alt: 'Hacha de juego - anjanadaksh on Pixabay' },
+          { url: 'https://pixabay.com/get/gce5dd79235e0686af7811a659acbb3f5e34a6afee934ecb7d29209c5135effcb6cca4f5091517e5f963ff8aceed66ea2.png', alt: 'Cañón de fantasía - SerenityArt on Pixabay' },
+          { url: 'https://pixabay.com/get/g70d5052a424f42bc4de6559d229148b3b89ed75afee7cfaaf16484e72ae61bff8f698dce12469c6655ca0f8d4b96ed81.jpg', alt: 'Textura de metal - 614799 on Pixabay' },
+          { url: 'https://images.unsplash.com/photo-1693145599159-462e5335ceb3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTAwNDR8MHwxfHNlYXJjaHwzfHx0ZXh0dXJlJTIwbWF0ZXJpYWwlMjBzdXJmYWNlJTIwcGJyJTIwZGV0YWlsZWQlMjB0ZXh0dXJlJTIwbWF0ZXJpYWwlMjBzdXJmYWNlJTIwcGJyfGVufDB8MHx8fDE3NjU2Njg4MjJ8MA&ixlib=rb-4.1.0&q=85', alt: 'Patrón metálico - H&CO on Unsplash' },
+          { url: 'https://pixabay.com/get/g236fb41f073c84fa789f00a0b8704277a47354c353df65e0c570dbf018dab3c470a6150d59882847e688b14f3176a7b5.png', alt: 'Letrero de madera - SerenityArt on Pixabay' }
+        ]
+      }
+    };
+
+    let currentGallery = null;
+    let currentSlide = 0;
+
+    // Open modal with gallery
+    function openModal(galleryType) {
+      currentGallery = galleries[galleryType];
+      currentSlide = 0;
+      
+      const modal = document.getElementById('imageModal');
+      const modalTitle = document.getElementById('modal-title');
+      const sliderTrack = document.getElementById('sliderTrack');
+      const sliderDots = document.getElementById('sliderDots');
+      
+      modalTitle.textContent = currentGallery.title;
+      
+      // Build slider
+      sliderTrack.innerHTML = currentGallery.images.map(img => 
+        `<div class="slider-slide">
+          <img src="${img.url}" alt="${img.alt}" loading="lazy">
+        </div>`
+      ).join('');
+      
+      // Build dots
+      sliderDots.innerHTML = currentGallery.images.map((_, index) => 
+        `<button class="slider-dot ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})" aria-label="Ir a imagen ${index + 1}"></button>`
+      ).join('');
+      
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      
+      // Reinitialize Lucide icons
+      setTimeout(() => lucide.createIcons(), 100);
+    }
+
+    // Close modal
+    function closeModal() {
+      const modal = document.getElementById('imageModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+      currentGallery = null;
+      currentSlide = 0;
+    }
+
+    // Change slide
+    function changeSlide(direction) {
+      if (!currentGallery) return;
+      
+      currentSlide += direction;
+      
+      if (currentSlide < 0) {
+        currentSlide = currentGallery.images.length - 1;
+      } else if (currentSlide >= currentGallery.images.length) {
+        currentSlide = 0;
+      }
+      
+      updateSlider();
+    }
+
+    // Go to specific slide
+    function goToSlide(index) {
+      currentSlide = index;
+      updateSlider();
+    }
+
+    // Update slider position and dots
+    function updateSlider() {
+      const sliderTrack = document.getElementById('sliderTrack');
+      const dots = document.querySelectorAll('.slider-dot');
+      
+      sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+      
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSlide);
+      });
+    }
+
+    // Add click handlers to art cards
+    document.querySelectorAll('.art-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const gallery = card.getAttribute('data-gallery');
+        openModal(gallery);
+      });
+    });
+
+    // Close modal on backdrop click
+    document.getElementById('imageModal').addEventListener('click', (e) => {
+      if (e.target.id === 'imageModal') {
+        closeModal();
+      }
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && currentGallery) {
+        closeModal();
+      }
+      if (e.key === 'ArrowLeft' && currentGallery) {
+        changeSlide(-1);
+      }
+      if (e.key === 'ArrowRight' && currentGallery) {
+        changeSlide(1);
+      }
+    });
+
+    // Cherry Blossom Petals Animation
+    function createPetal() {
+      const petal = document.createElement('div');
+      petal.className = 'petal';
+      
+      // Random horizontal position
+      const startX = Math.random() * window.innerWidth;
+      petal.style.left = startX + 'px';
+      
+      // Random size variation
+      const size = 12 + Math.random() * 8;
+      petal.style.width = size + 'px';
+      petal.style.height = size + 'px';
+      
+      // Random animation duration (slower = more realistic)
+      const duration = 15 + Math.random() * 10;
+      petal.style.animationDuration = duration + 's';
+      
+      // Random delay
+      const delay = Math.random() * 5;
+      petal.style.animationDelay = delay + 's';
+      
+      // Random horizontal drift
+      const drift = -30 + Math.random() * 60;
+      petal.style.setProperty('--drift', drift + 'px');
+      
+      // Add swaying animation
+      if (Math.random() > 0.5) {
+        petal.style.animation = `fall linear infinite, sway ${3 + Math.random() * 2}s ease-in-out infinite`;
+        petal.style.animationDuration = duration + 's, ' + (3 + Math.random() * 2) + 's';
+      }
+      
+      document.getElementById('petalsContainer').appendChild(petal);
+      
+      // Remove petal after animation completes
+      setTimeout(() => {
+        petal.remove();
+      }, (duration + delay) * 1000);
+    }
+    
+    // Create initial petals
+    function initPetals() {
+      const petalCount = 25; // Number of petals on screen
+      for (let i = 0; i < petalCount; i++) {
+        setTimeout(() => {
+          createPetal();
+        }, i * 300); // Stagger creation
+      }
+    }
+    
+    // Continuously create new petals
+    function continuousPetals() {
+      setInterval(() => {
+        createPetal();
+      }, 800); // Create a new petal every 800ms
+    }
+    
+    // Start the petal animation
+    initPetals();
+    continuousPetals();
+  </script>
+</body>
+</html>
