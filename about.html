@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - Alicia Sánchez</title>
+  <!-- TailwindCSS vía CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons vía CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- GSAP (animaciones coherentes con otras páginas) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- Google Fonts (coincidir con el resto del sitio) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --geek-green: #a3e635;
+      --freak-cyan: #3B82F6;
+      --freak-violet: #9333EA;
+    }
+
+    body { font-family: 'Source Sans 3', sans-serif; }
+    .font-display { font-family: 'Space Grotesk', sans-serif; }
+    .font-display-freak { font-family: 'Bebas Neue', sans-serif; letter-spacing:0.03em }
+
+    .page-bg {
+      background: linear-gradient(135deg, #06070a 0%, #0b1220 40%, #071028 100%);
+    }
+
+    .profile-card {
+      background: linear-gradient(135deg, rgba(16,24,39,0.6), rgba(15,23,42,0.5));
+      border: 1px solid rgba(255,255,255,0.03);
+      box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+    }
+
+    .accent-gradient {
+      background-image: linear-gradient(90deg, var(--freak-cyan), var(--freak-violet));
+    }
+
+    .avatar-gradient {
+      background: linear-gradient(135deg, var(--freak-cyan), var(--freak-violet));
+    }
+
+    .card-ring { padding: 1px; border-radius: 1rem; }
+
+    @media (max-width:768px){ .font-display { font-size: 1.1rem } }
+  </style>
+</head>
+<body class="min-h-screen page-bg">
+  <!-- Header -->
+  <header class="bg-black/60 backdrop-blur-md border-b border-slate-700/30 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-5 flex items-center justify-between">
+      <h1 class="text-3xl font-bold text-white font-display">Alicia Sánchez</h1>
+      <button
+        onclick="location.href='index.html'"
+        class="flex items-center gap-2 text-white hover:text-cyan-400 transition-colors duration-300"
+      >
+        <i data-lucide="home" class="w-6 h-6"></i>
+        <span>Inicio</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="max-w-5xl mx-auto px-4 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+      <!-- Avatar / Card -->
+      <div class="md:col-span-1">
+        <div class="card-ring rounded-2xl">
+          <div class="profile-card rounded-2xl p-6 h-full flex flex-col items-center justify-center">
+            <div class="w-40 h-40 avatar-gradient rounded-full flex items-center justify-center text-white text-6xl font-bold mb-6 overflow-hidden">
+              <img src="img/avatar.png" alt="Avatar Alicia Sánchez" class="w-full h-full object-cover rounded-full" loading="lazy">
+            </div>
+            <h2 class="text-3xl font-bold text-white mb-2 font-display">Alicia Sánchez</h2>
+            <p class="text-slate-300 text-center">Desarrolladora & Diseñadora — UI/UX · 3D · Animación</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- About + Contact -->
+      <div class="md:col-span-2 space-y-8">
+        <!-- Sobre mí -->
+        <div class="bg-slate-800/60 backdrop-blur-sm border border-slate-700/30 rounded-xl p-8 profile-card">
+          <h3 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+            <i data-lucide="briefcase" class="text-cyan-400 w-6 h-6"></i>
+            Sobre Mí
+          </h3>
+          <div class="space-y-4 text-slate-300 leading-relaxed">
+            <p>
+              Hola! Soy una profesional apasionada por la tecnología y el diseño, con una doble vida entre el mundo digital y el entretenimiento.
+            </p>
+            <p>
+              En mi faceta <span class="text-cyan-400 font-semibold">GEEK</span>, me dedico al desarrollo web y diseño de interfaces, creando experiencias digitales funcionales y atractivas. Me especializo en tecnologías modernas y siempre estoy aprendiendo algo nuevo.
+            </p>
+            <p>
+              En mi lado <span class="text-violet-400 font-semibold">FREAK</span>, soy una entusiasta de los videojuegos, el cine y la música. Me encanta analizar narrativas, descubrir nuevos juegos indie y compartir mis opiniones sobre las últimas series y películas.
+            </p>
+            <p>
+              Esta dualidad me permite mantener un equilibrio perfecto entre la creatividad técnica y la creatividad artística.
+            </p>
+          </div>
+        </div>
+
+        <!-- Contacto -->
+        <div class="bg-slate-800/60 backdrop-blur-sm border border-slate-700/30 rounded-xl p-8 profile-card">
+          <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <i data-lucide="mail" class="text-violet-400 w-6 h-6"></i>
+            Contacto
+          </h3>
+          <div class="space-y-4">
+            <a
+              href="mailto:alicia.sanchez@email.com"
+              class="flex items-center gap-3 text-slate-300 hover:text-cyan-400 transition-colors duration-300 group"
+            >
+               <div class="p-2 bg-slate-700 rounded-lg transition-all duration-300 ease-in-out group-hover:bg-cyan-500/20 group-hover:rotate-12 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-cyan-500/40">
+                <i data-lucide="mail" class="w-5 h-5"></i>
+              </div>
+              <span>alisanchezgv@gmail.com</span>
+            </a>
+
+            <a
+              href="https://github.com/aliciafonteta"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-3 text-slate-300 hover:text-cyan-400 transition-colors duration-300 group"
+            >
+               <div class="p-2 bg-slate-700 rounded-lg transition-all duration-300 ease-in-out group-hover:bg-cyan-500/20 group-hover:rotate-12 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-cyan-500/40">
+                <i data-lucide="github" class="w-5 h-5"></i>
+              </div>
+              <span>github</span>
+            </a>
+
+            <a
+              href="https://www.linkedin.com/in/alicia-s%C3%A1nchez-gv/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-3 text-slate-300 hover:text-cyan-400 transition-colors duration-300 group"
+            >
+               <div class="p-2 bg-slate-700 rounded-lg transition-all duration-300 ease-in-out group-hover:bg-cyan-500/20 group-hover:rotate-12 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-cyan-500/40">
+                <i data-lucide="linkedin" class="w-5 h-5"></i>
+              </div>
+              <span>linkedin</span>
+            </a>
+
+            <a 
+              href="https://zalea.artstation.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="flex items-center gap-3 text-slate-300 hover:text-cyan-400 transition-colors duration-300 group">
+                <div class="p-2 bg-slate-700 rounded-lg transition-all duration-300 ease-in-out group-hover:bg-cyan-500/20 group-hover:rotate-12 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-cyan-500/40">
+                  <!-- Lucide no tiene icono oficial de ArtStation, puedes usar 'globe' o 'image' como sustituto -->
+                  <i data-lucide="image" class="w-5 h-5"></i>
+                </div>
+                <span>artstation</span>
+            </a>
+            
+            <div class="flex items-center gap-3 text-slate-300">
+              <div class="p-2 bg-slate-700 rounded-lg">
+                <i data-lucide="map-pin" class="w-5 h-5"></i>
+              </div>
+              <span>España</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    lucide.createIcons();
+    // Animaciones simples para coherencia con las otras páginas
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.from("header", { y: -30, opacity: 0, duration: 0.8, ease: "power3.out" });
+    gsap.from(".profile-card", {
+      y: 20,
+      opacity: 0,
+      duration: 0.9,
+      stagger: 0.15,
+      ease: "power3.out",
+      scrollTrigger: { trigger: ".profile-card", start: "top 85%" }
+    });
+
+    gsap.from(".space-y-8 > .profile-card, .space-y-8 > .bg-slate-800/60", {
+      y: 20,
+      opacity: 0,
+      duration: 0.9,
+      stagger: 0.12,
+      ease: "power3.out",
+      scrollTrigger: { trigger: ".space-y-8", start: "top 90%" }
+    });
+  </script>
+  
+</body>
+</html>
