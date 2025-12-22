@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alicia Sánchez</title>
+  <link rel="icon" href="img/pez-koi.webp" type="image/svg+xml">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Bebas+Neue&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      overflow-x: hidden;
+    }
+    
+    .font-display-geek {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    
+    .font-display-freak {
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.05em;
+    }
+    
+    /* Glowing effects */
+    .glow-geek {
+      box-shadow: 0 0 20px rgba(163, 230, 53, 0.4), 0 0 40px rgba(163, 230, 53, 0.2);
+    }
+    
+    .glow-freak {
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.4), 0 0 40px rgba(147, 51, 234, 0.2);
+    }
+    
+    /* Hover glow intensify */
+    .glow-geek:hover {
+      box-shadow: 0 0 30px rgba(163, 230, 53, 0.6), 0 0 60px rgba(163, 230, 53, 0.4);
+    }
+    
+    .glow-freak:hover {
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.6), 0 0 60px rgba(147, 51, 234, 0.4);
+    }
+    
+    /* Particle container */
+    .particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: float 20s infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0) translateX(0); }
+      25% { transform: translateY(-100px) translateX(50px); }
+      50% { transform: translateY(-200px) translateX(-50px); }
+      75% { transform: translateY(-100px) translateX(100px); }
+    }
+    
+    /* Scanline effect for geek */
+    .scanlines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        transparent 50%,
+        rgba(163, 230, 53, 0.02) 50%
+      );
+      background-size: 100% 4px;
+      pointer-events: none;
+      opacity: 0.3;
+    }
+    
+    /* Neon border for freak */
+    .neon-border {
+      position: relative;
+    }
+    
+    .neon-border::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(45deg, #3B82F6, #9333EA, #F97316);
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: -1;
+    }
+    
+    .neon-border:hover::before {
+      opacity: 0.7;
+      animation: neonPulse 2s infinite;
+    }
+    
+    @keyframes neonPulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+    
+    /* Word toggle animation */
+    .word-toggle {
+      display: inline-block;
+      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    
+    .word-toggle.fade-out {
+      opacity: 0;
+      transform: scale(0.8) rotateX(90deg);
+    }
+    
+    .word-toggle.fade-in {
+      opacity: 1;
+      transform: scale(1) rotateX(0deg);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-black flex flex-col relative">
+  
+  <!-- Particles Background -->
+  <div class="particles" id="particles"></div>
+
+  <main class="flex-1 flex items-center justify-center p-4 md:p-8 relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr,auto,1fr] gap-6 md:gap-8 max-w-7xl w-full items-center">
+      
+      <!-- Bloque GEEK -->
+      <div onclick="location.href='geek.html'" 
+           class="geek-card group relative h-[450px] md:h-[650px] rounded-3xl overflow-hidden cursor-pointer transform transition-all duration-700 hover:scale-[1.02] glow-geek">
+        
+        <!-- Scanlines effect -->
+        <div class="scanlines"></div>
+        
+        <!-- Gradient overlay -->
+        <div class="absolute inset-0 bg-gradient-to-br from-[#a3e635] via-[#84cc16] to-[#f97316] opacity-90 group-hover:opacity-100 transition-opacity duration-500"></div>
+        
+        <!-- Grid pattern overlay -->
+        <div class="absolute inset-0 opacity-10" style="background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px), repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px);"></div>
+        
+        <!-- Content -->
+        <div class="absolute inset-0 flex flex-col items-center justify-center text-white p-8">
+          <div class="icon-geek mb-8 transform group-hover:scale-110 transition-transform duration-500">
+            <i data-lucide="code-2" class="w-20 h-20 md:w-28 md:h-28 stroke-[1.5]"></i>
+          </div>
+          <h2 class="font-display-geek text-6xl md:text-8xl font-bold mb-4 tracking-tight">GEEK</h2>
+          <div class="h-px w-24 bg-white/50 mb-4"></div>
+          <p class="text-xl md:text-2xl font-light opacity-0 group-hover:opacity-100 transition-opacity duration-500">Portfolio Profesional</p>
+          <p class="text-sm md:text-base mt-2 opacity-0 group-hover:opacity-80 transition-opacity duration-500 text-center max-w-xs">Desarrollo · Diseño · Innovación</p>
+        </div>
+        
+        <!-- Corner accent -->
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/10 to-transparent rounded-bl-full"></div>
+        <div class="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-white/10 to-transparent rounded-tr-full"></div>
+      </div>
+
+      <!-- Palabra dinámica -->
+      <div class="flex items-center justify-center h-[80px] lg:h-[650px] w-full lg:w-20">
+        <span id="wordToggle" class="word-toggle text-6xl md:text-7xl font-bold text-white opacity-0"></span>
+      </div>
+
+      <!-- Bloque FREAK -->
+      <div onclick="location.href='freak.html'" 
+           class="freak-card group relative h-[450px] md:h-[650px] rounded-3xl overflow-hidden cursor-pointer transform transition-all duration-700 hover:scale-[1.02] glow-freak neon-border">
+        
+        <!-- Animated gradient overlay -->
+        <div class="absolute inset-0 bg-gradient-to-br from-[#3B82F6] via-[#9333EA] to-[#F97316] opacity-90 group-hover:opacity-100 transition-opacity duration-500"></div>
+        
+        <!-- Noise texture overlay -->
+        <div class="absolute inset-0 opacity-20 mix-blend-overlay" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
+        
+        <!-- Content -->
+        <div class="absolute inset-0 flex flex-col items-center justify-center text-white p-8">
+          <div class="icon-freak mb-8 transform group-hover:rotate-12 group-hover:scale-110 transition-all duration-500">
+            <i data-lucide="gamepad-2" class="w-20 h-20 md:w-28 md:h-28 stroke-[1.5]"></i>
+          </div>
+          <h2 class="font-display-freak text-7xl md:text-9xl font-bold mb-4">FREAK</h2>
+          <div class="h-1 w-24 bg-white/50 mb-4"></div>
+          <p class="text-xl md:text-2xl font-light opacity-0 group-hover:opacity-100 transition-opacity duration-500">Mi Universo Creativo</p>
+          <p class="text-sm md:text-base mt-2 opacity-0 group-hover:opacity-80 transition-opacity duration-500 text-center max-w-xs">Gaming · Anime · Música</p>
+        </div>
+        
+        <!-- Geometric shapes -->
+        <div class="absolute top-10 right-10 w-20 h-20 border-4 border-white/20 rotate-45 group-hover:rotate-90 transition-transform duration-700"></div>
+        <div class="absolute bottom-10 left-10 w-16 h-16 border-4 border-white/20 rounded-full group-hover:scale-125 transition-transform duration-700"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="py-8 text-center relative z-10">
+    <button onclick="location.href='about.html'" 
+            class="group text-white text-2xl md:text-3xl font-light tracking-wider transition-all duration-300 hover:tracking-widest relative">
+      <span class="relative z-10">Alicia Sánchez</span>
+      <span class="absolute inset-0 bg-gradient-to-r from-[#a3e635] via-[#3B82F6] to-[#9333EA] opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300"></span>
+    </button>
+  </footer>
+
+  <script>
+    // Particles generation
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const colors = ['#a3e635', '#84cc16', '#f97316', '#3B82F6', '#9333EA', '#F97316'];
+      
+      for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.width = Math.random() * 6 + 2 + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.animationDelay = Math.random() * 20 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Word toggle animation
+    const wordToggle = document.getElementById("wordToggle");
+    const words = ["o", "y"];
+    let index = 0;
+
+    function changeWord() {
+      wordToggle.classList.add("fade-out");
+      
+      setTimeout(() => {
+        wordToggle.textContent = words[index];
+        index = (index + 1) % words.length;
+        wordToggle.classList.remove("fade-out");
+        wordToggle.classList.add("fade-in");
+        
+        setTimeout(() => {
+          wordToggle.classList.remove("fade-in");
+        }, 500);
+      }, 500);
+    }
+
+    // Initialize everything when DOM is ready
+    window.addEventListener('load', function() {
+      // Initialize Lucide icons first
+      lucide.createIcons();
+      
+      // Create particles
+      createParticles();
+      
+      // Initial word display
+      wordToggle.textContent = words[0];
+      wordToggle.style.opacity = "1";
+      
+      setInterval(changeWord, 4000);
+
+      // GSAP Animations - run after icons are created
+      gsap.from(".geek-card", {
+        x: -100,
+        opacity: 0,
+        duration: 1.2,
+        ease: "power3.out",
+        delay: 0.2
+      });
+
+      gsap.from(".freak-card", {
+        x: 100,
+        opacity: 0,
+        duration: 1.2,
+        ease: "power3.out",
+        delay: 0.2
+      });
+
+      gsap.from(".icon-geek svg", {
+        scale: 0,
+        rotation: -180,
+        duration: 1,
+        ease: "back.out(1.7)",
+        delay: 0.8
+      });
+
+      gsap.from(".icon-freak svg", {
+        scale: 0,
+        rotation: 180,
+        duration: 1,
+        ease: "back.out(1.7)",
+        delay: 0.8
+      });
+    });
+
+    // Hover animations - wait for DOM to be ready
+    window.addEventListener('load', function() {
+      document.querySelector('.geek-card').addEventListener('mouseenter', function() {
+        gsap.to(this.querySelector('.icon-geek svg'), {
+          y: -10,
+          duration: 0.3,
+          ease: "power2.out"
+        });
+      });
+
+      document.querySelector('.geek-card').addEventListener('mouseleave', function() {
+        gsap.to(this.querySelector('.icon-geek svg'), {
+          y: 0,
+          duration: 0.3,
+          ease: "power2.out"
+        });
+      });
+
+      document.querySelector('.freak-card').addEventListener('mouseenter', function() {
+        gsap.to(this.querySelector('.icon-freak svg'), {
+          y: -10,
+          duration: 0.3,
+          ease: "power2.out"
+        });
+      });
+
+      document.querySelector('.freak-card').addEventListener('mouseleave', function() {
+        gsap.to(this.querySelector('.icon-freak svg'), {
+          y: 0,
+          duration: 0.3,
+          ease: "power2.out"
+        });
+      });
+    });
+  </script>
+</body>
+</html>
